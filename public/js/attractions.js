@@ -76,6 +76,10 @@ var attractionsModule = (function () {
 
     create: function (databaseAttraction) {
       return new Attraction(databaseAttraction);
+    },
+
+    addAttract: function(dayNum, attObj) {
+      $.post('../api/days/'+dayNum+"/"+attraction.type + "/" + attraction._id);
     }
 
   };

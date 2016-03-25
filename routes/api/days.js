@@ -5,6 +5,7 @@ var Hotel = models.Hotel;
 var Restaurant = models.Restaurant;
 var Activity = models.Activity;
 var Day = models.Day;
+var Promise = require('bluebird');
 
 // Get one specific day
 router.get('/:num', function(req, res, next) {
@@ -22,10 +23,20 @@ router.get('/', function(req, res, next) {
 
 // Delete one day
 router.delete('/:num', function(req, res, next) {
-	Day.findOne({number: req.params.num}).then(function(day) {
-		day.remove();
-		res.end();
-	}).then(null, next);
+
+    Day.find().then(function(days) {
+    	days.forEach(function(day) {
+    		if (day.number == req.params.num) {
+    			day.remove();
+    		}
+    		else if (day.number > req.params.num) {
+    			day.number--;
+    			day.save();
+    		}
+    	})
+    })
+    .then(null, next);
+
 });
 
 // Create a day
@@ -36,21 +47,19 @@ router.post('/', function(req, res, next) {
 });
 
 // Add/remove attractions from a day (POST)
-router.post('/:num/:attraction', function(req, res, next) {
-	console.log("Wrong post")
-	var type = req.body.attraction;
+router.post('/:num/:type/:id', function(req, res, next) {
 
-	// Get the day 
-	Day.findOne({number: req.body.num}).then(function(day) {
-		day[type].push(req.body);	
-	}).save().then(null, next);
+console.log("Hello?");
+Promise.all([
+    Hotel.findOne({_id: req.params.id}),
+    Day.findOne({number: req.params.num})
+  ])
+  .spread(function(hotelAttr, day) {
+   	day.hotel = hotelAttr;
+   	day.save();
+  });
+
+
 });
 
 module.exports = router;
-
-// $.get('/api/days', function (days) {
-//   days.forEach(function(day){
-//     console.log(day);
-//   });
-// })
-// .fail( console.error.bind(console) );

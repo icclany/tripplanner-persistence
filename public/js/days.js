@@ -49,7 +49,7 @@ var daysModule = (function() {
     });
 
     function addDay() {
-        // 1. Add a day to the front-end
+        // 1. Add a day obj to the front-end
         if (this && this.blur) this.blur(); // removes focus box from buttons
         var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
         days.push(newDay);
@@ -62,6 +62,11 @@ var daysModule = (function() {
     };
 
     function deleteCurrentDay() {
+        // 1. Delete day from database
+        console.log(currentDay);
+        dayModule.delete(currentDay);
+
+        // 2. Deleted the day from the front-end
         // prevent deleting last day
         if (days.length < 2 || !currentDay) return;
         // remove from the collection
@@ -74,6 +79,11 @@ var daysModule = (function() {
         });
         switchTo(newCurrent);
         previousDay.hideButton();
+
+
+
+        // 2. Remove that day from the database
+        // INSERT CODE HERE
     }
 
     // globally accessible module methods
@@ -96,6 +106,8 @@ var daysModule = (function() {
                 // ...2. Set its class to current day so it's highlighted
                 newDayObj.show();
                 }
+                // Add the day's attractions
+                
           });
         })
         },
