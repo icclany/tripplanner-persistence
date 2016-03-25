@@ -30,12 +30,14 @@ router.delete('/:num', function(req, res, next) {
 
 // Create a day
 router.post('/', function(req, res, next) {
-	console.log("got a post request")
+	res.send("got a post request!")
+	console.log(req.body);
 	Day.create(req.body).then(null, next);
 });
 
 // Add/remove attractions from a day (POST)
 router.post('/:num/:attraction', function(req, res, next) {
+	console.log("Wrong post")
 	var type = req.body.attraction;
 
 	// Get the day 

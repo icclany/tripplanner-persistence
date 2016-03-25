@@ -49,6 +49,7 @@ var daysModule = (function() {
     });
 
     function addDay() {
+        // 1. Add a day to the front-end
         if (this && this.blur) this.blur(); // removes focus box from buttons
         var newDay = dayModule.create({ number: days.length + 1 }); // dayModule
         days.push(newDay);
@@ -56,10 +57,9 @@ var daysModule = (function() {
             currentDay = newDay;
             switchTo(currentDay);
         }
-
-        // Add to days dbs
-        $.post('/api/days', newDay, function() {console.log("Success")})
-    }
+        // 2. Add that day to the database
+      dayModule.add(newDay);
+    };
 
     function deleteCurrentDay() {
         // prevent deleting last day
@@ -79,17 +79,25 @@ var daysModule = (function() {
     // globally accessible module methods
 
     var methods = {
-
+        // "Load" loads the page when the homepage is requested 
         load: function() {
-            $.get('/api/days', function(dbDays) {
-              currentDay = dayModule.create(dbDays[0]);
-              currentDay.show();
-
-              for (var i = 1; i<dbDays.length; i++) {
-                dayModule.create(dbDays[i]);
-              }
-            })
-
+          // Use AJAX to get a list of all days from the database
+          $.get('/api/days', function(dbDays) {
+            // For every day in the database...
+            dbDays.forEach(function(dbDay) {
+              // Create a new "day" object 
+              var newDayObj = dayModule.create(dbDay);
+              // Push the day object onto our "days" array
+              days.push(newDayObj);
+              // If there's only one day so far, set it as the current day...
+               if (days.length === 1) {
+                // ...1. Set the current day variable
+                currentDay = newDayObj; 
+                // ...2. Set its class to current day so it's highlighted
+                newDayObj.show();
+                }
+          });
+        })
         },
 
         switchTo: switchTo,

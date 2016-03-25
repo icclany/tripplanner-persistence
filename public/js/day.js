@@ -127,6 +127,10 @@ var dayModule = (function () {
 
     create: function (databaseDay) {
       return new Day(databaseDay);
+    },
+
+    add: function (dayObj) {
+      $.post('../api/days', {number: dayObj.number});
     }
 
   };
